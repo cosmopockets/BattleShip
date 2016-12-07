@@ -1,7 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
-
+import java.awt.image.BufferedImage;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 
 /*
  * Board Game need two 10*10 boards 1 for user 1 for Comp
@@ -15,33 +16,30 @@ import javax.swing.*;
  * needs a point recording status
  * needs a file menu to cancel the game
  * 
- * could have a difficulty setting
- * 
  * need a help menu for tips on how to play the game
- * 
  * 
  * USE A CONTENT PANE, ADD A JLABEL IN THE UPPER PART IN THE MESAGE BAR
  * ADD A JLABEL IN THE LOWER PART FOR USE AS A STATUS BAR
- *  
  */
 public class BoardGame extends JFrame {
-
 	// Constants for window size
-	final int WINDOW_WIDTH = 650;
+	final int WINDOW_WIDTH = 800;
 	final int WINDOW_LENGTH = 800;
-
 	// objects needed for GUI
 	private Container contentPane;
 	private JPanel statusPanel;
 	private JPanel topPanel;
 	private JPanel bottomPanel;
+	private JButton[][] compBoardSquares = new JButton[10][10];
+	private JButton[][] userBoardSquares = new JButton[10][10];
 	private JLabel statusBar;
+	private JPanel bBoard;
+	private static final String COLS = "ABCDEFGHIJ";
+	public final static int EMPTY = 0;
+	public final static int EMPTY_HIT = 2;
+	public final static int OCCUPIED = 3;
+	public final static int OCCUPIED_HIT = 4;
 	public BoardGame() {
-
-		int[][] compBoard = new int[10][10];
-		int[][] userBoard = new int[10][10];
-		int shotsHit = 0;
-		int shotsMissed = 0;
 
 		setTitle("BattleShip");
 		setSize(WINDOW_WIDTH, WINDOW_LENGTH);
@@ -67,10 +65,9 @@ public class BoardGame extends JFrame {
 		contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
 
-		
 		buildTopPanel();
 		contentPane.add(topPanel, BorderLayout.NORTH);
-		
+
 		buildStatusPanel();
 
 		buildBottomPanel();
@@ -81,30 +78,99 @@ public class BoardGame extends JFrame {
 	private void buildTopPanel() {
 		// create top panel
 		topPanel = new JPanel();
-		topPanel.setPreferredSize(new Dimension(200,300));
+		topPanel.setPreferredSize(new Dimension(200, 300));
 		topPanel.setBackground(Color.lightGray);
 		contentPane.add(topPanel, BorderLayout.NORTH);
-		
-		JPanel[][] compBoard = new JPanel[10][10];
 
-	}
-	
-	private void buildStatusPanel(){
-		statusPanel = new JPanel();
-		statusPanel.setPreferredSize(new Dimension(200,200));
-		statusPanel.setBackground(Color.white);
-		contentPane.add(statusPanel, BorderLayout.CENTER);
-		
+		bBoard = new JPanel(new GridLayout(10, 10, 2, 2));
+		bBoard.setBorder(new LineBorder(Color.black));
+		topPanel.add(bBoard);
+
+		Insets squareMargin = new Insets(0, 0, 0, 0);
+		for (int ii = 0; ii < compBoardSquares.length; ii++) {
+			for (int jj = 0; jj < compBoardSquares[ii].length; jj++) {
+				JButton b = new JButton();
+				b.setMargin(squareMargin);
+				ImageIcon icon = new ImageIcon(new BufferedImage(64, 64,
+						BufferedImage.TYPE_INT_ARGB));
+				b.setIcon(icon);
+				if ((jj % 2 == 1 && ii % 2 == 1)
+						|| (jj % 2 == 0 && ii % 2 == 0)) {
+					b.setBackground(Color.WHITE);
+				} else {
+					b.setBackground(Color.WHITE);
+				}
+				compBoardSquares[jj][ii] = b;
+			}
+
+		}
+		bBoard.add(new JLabel(""));
+		for (int ii = 0; ii < 10; ii++) {
+			bBoard.add(new JLabel(COLS.substring(ii, ii + 1),
+					SwingConstants.CENTER));
+		}
+		for (int ii = 0; ii < 10; ii++) {
+			for (int jj = 0; jj < 10; jj++) {
+				switch (jj) {
+				case 0:
+					bBoard.add(new JLabel("" + (ii + 1), SwingConstants.CENTER));
+				default:
+					bBoard.add(compBoardSquares[jj][ii]);
+				}
+			}
+		}
 	}
 
 	private void buildBottomPanel() {
 		bottomPanel = new JPanel();
-		bottomPanel.setPreferredSize(new Dimension(200,300));
+		bottomPanel.setPreferredSize(new Dimension(200, 300));
 		bottomPanel.setBackground(Color.lightGray);
 		contentPane.add(bottomPanel, BorderLayout.SOUTH);
-		
-		JPanel[][] userBoard = new JPanel[10][10];
 
+		bBoard = new JPanel(new GridLayout(10, 10, 2, 2));
+		bBoard.setBorder(new LineBorder(Color.black));
+		bottomPanel.add(bBoard);
+
+//		Insets squareMargin = new Insets(0, 0, 0, 0);
+//		for (int ii = 0; ii < userBoardSquares.length; ii++) {
+//			for (int jj = 0; jj < userBoardSquares[ii].length; jj++) {
+//				JButton b = new JButton();
+//				b.setMargin(squareMargin);
+//				ImageIcon icon = new ImageIcon(new BufferedImage(64, 64,
+//						BufferedImage.TYPE_INT_ARGB));
+//				b.setIcon(icon);
+//				if ((jj % 2 == 1 && ii % 2 == 1)
+//						|| (jj % 2 == 0 && ii % 2 == 0)) {
+//					b.setBackground(Color.WHITE);
+//				} else {
+//					b.setBackground(Color.WHITE);
+//				}
+//				userBoardSquares[jj][ii] = b;
+//			}
+//
+//		}
+//		bBoard.add(new JLabel(""));
+//		for (int ii = 0; ii < 10; ii++) {
+//			bBoard.add(new JLabel(COLS.substring(ii, ii + 1),
+//					SwingConstants.CENTER));
+//		}
+//		for (int ii = 0; ii < 10; ii++) {
+//			for (int jj = 0; jj < 10; jj++) {
+//				switch (jj) {
+//				case 0:
+//					bBoard.add(new JLabel("" + (ii + 1), SwingConstants.CENTER));
+//				default:
+//					bBoard.add(userBoardSquares[jj][ii]);
+//				}
+//			}
+//		}
+	}
+
+	private void buildStatusPanel() {
+		statusPanel = new JPanel();
+		statusPanel.setPreferredSize(new Dimension(200, 200));
+		statusPanel.setBackground(Color.white);
+		contentPane.add(statusPanel, BorderLayout.CENTER);
 	}
 
 }
